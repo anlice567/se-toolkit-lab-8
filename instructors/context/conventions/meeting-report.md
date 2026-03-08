@@ -1,4 +1,11 @@
-# Meeting Report Prompt
+# Meeting report conventions
+
+## File locations
+
+- **Transcript**: `instructors/meetings/week-N/meeting-M/transcripts/transcript-by-speaker.txt`
+- **Report**: `instructors/meetings/week-N/meeting-M/meeting-report.md`
+
+Substitute actual week and meeting numbers for N and M.
 
 ## General rules
 
