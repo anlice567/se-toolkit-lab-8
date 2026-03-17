@@ -143,7 +143,7 @@ You can browse a repository at a particular [revision](./git.md#revision): `<rep
 - See [`<repo-url>`](#repo-url).
 - Replace the `<revision>` at the end of the [URL](./computer-networks.md#url) with an actual [revision](./git.md#revision).
 
-Example: <https://github.com/nixos/nixpkgs/tree/26eaeac4e409d7b5a6bf6f90a2a2dc223c78d915>
+Example: <https://github.com/nixos/nixpkgs/tree/nixpkgs-unstable>
 
 ### Make your repository public
 
