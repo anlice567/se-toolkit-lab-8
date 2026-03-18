@@ -51,7 +51,7 @@ The default values are in [`.env.docker.example`](../.env.docker.example).
 
 > [!NOTE]
 > `.env.docker.secret` was added to [`.gitignore`](./git.md#gitignore) because you may specify there
-> [secrets](./environments.md#secrets) such as the [API key](#api_key) or the [address of your VM](./vm.md#your-vm-ip-address).
+> [secrets](./environments.md#secrets) such as the [LMS API key](./lms-api.md#lms-api-key) or the [address of your VM](./vm.md#your-vm-ip-address).
 
 ## `app`
 
