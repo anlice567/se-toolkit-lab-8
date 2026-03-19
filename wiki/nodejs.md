@@ -54,14 +54,14 @@ Docs:
    [run in the `VS Code Terminal`](./vs-code.md#run-a-command-in-the-vs-code-terminal):
 
    ```terminal
-   nvm install 25.8.0
+   nvm install 25.8.1
    ```
 
 3. The output should be similar to this:
 
    ```terminal
-   Downloading and installing node v25.8.0...
-   Now using node v25.8.0 (npm v11.10.1)
+   Downloading and installing node v25.8.1...
+   Now using node v25.8.1 (npm v11.10.1)
    ```
 
 4. To set this version as the default,
@@ -125,7 +125,7 @@ Docs:
 3. The output should be similar to this:
 
    ```terminal
-   v25.8.0
+   v25.8.1
    ```
 
 <!-- TODO install npm with nix because when installing on the VM using nvm libatomic is missing -->
