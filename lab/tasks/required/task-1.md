@@ -59,7 +59,8 @@ Start by reading the [official nanobot repository](https://github.com/HKUDS/nano
    - "What is the agentic loop?" (quiz question Q18)
    - "What labs are available in our LMS?"
 
-   The agent answers general questions well, but it has no idea about the LMS — it will hallucinate or say it doesn't know. That's expected — it has no tools yet.
+   The agent answers general questions well, but it still has no **live LMS backend access** yet.
+   Depending on the nanobot version, it may inspect local repo files with built-in tools and give a plausible answer based on docs, but it cannot query real LMS data until Part B adds the MCP server.
 
 4. Try a single-message query:
 
@@ -80,7 +81,7 @@ Start by reading the [official nanobot repository](https://github.com/HKUDS/nano
 ### Checkpoint for Part A
 
 1. Run `cd nanobot && uv run nanobot agent -c ./config.json -m "What is the agentic loop?"` — you should get a reasonable answer.
-2. Run `cd nanobot && uv run nanobot agent -c ./config.json -m "What labs are available in our LMS?"` — it should **not** know (no tools).
+2. Run `cd nanobot && uv run nanobot agent -c ./config.json -m "What labs are available in our LMS?"` — it should **not** return real backend data. It may say it does not know, or it may inspect local repo files and answer from documentation instead of the live LMS.
 3. Paste both responses into `REPORT.md` under `## Task 1A — Bare agent`.
 
 ---
@@ -112,6 +113,30 @@ The LMS MCP server is provided in `mcp/mcp_lms/`. It exposes the backend API as 
    >
    > The LMS key stays on the agent side. Later, the web client will use a separate `NANOBOT_ACCESS_KEY`, not the backend key.
 
+   If you get stuck on the config shape, make sure your config has these two ideas:
+   - an MCP server entry that launches `python -m mcp_lms`
+   - your main agent is allowed to use that MCP server
+
+   For example, if your generated config uses a top-level `mcpServers` object, the MCP part will look roughly like this:
+
+   ```json
+   {
+     "mcpServers": {
+       "lms": {
+         "command": "python",
+         "args": ["-m", "mcp_lms"],
+         "env": {
+           "NANOBOT_LMS_BACKEND_URL": "http://localhost:42002",
+           "NANOBOT_LMS_API_KEY": "${NANOBOT_LMS_API_KEY}"
+         }
+       }
+     }
+   }
+   ```
+
+   Then make sure your main agent includes that server in its `mcpServers` list.
+   If your onboard-generated config uses a slightly different layout, keep the same meaning: start `mcp_lms` as a stdio subprocess and attach it to the agent.
+
 3. Test with the agent:
 
    ```terminal
@@ -142,7 +167,7 @@ The LMS MCP server is provided in `mcp/mcp_lms/`. It exposes the backend API as 
 ### Checkpoint for Part B
 
 1. Ask the agent **"What labs are available?"** — it should return real lab names (e.g., `lab-01`, `lab-02`).
-2. Ask the agent **"Describe the architecture of the LMS system"** (Q22) — it should mention specific services.
+2. Ask the agent **"Is the LMS backend healthy?"** — it should answer from the LMS tool and mention a real health result such as the item count.
 3. Paste both responses into `REPORT.md` under `## Task 1B — Agent with LMS tools`.
 
 ---
