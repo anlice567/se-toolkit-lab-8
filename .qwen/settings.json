@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat *)",
+      "Bash(curl *)",
+      "Bash(ls *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Read(//Users/user/.qwen/**)",
+      "Bash(eof)",
+      "Bash(docker compose *)",
+      "Bash(ssh *)",
+      "Bash(git submodule *)",
+      "Bash(uv *)",
+      "Bash(od *)",
+      "Bash(sed *)",
+      "Bash(rm *)",
+      "Bash(xxd)",
+      "Bash(head *)",
+      "Bash(echo *)",
+      "Bash(tail *)",
+      "Bash(mv *)",
+      "Bash(awk *)",
+      "Bash(printf *)",
+      "Bash(cp *)",
+      "Bash(git add *)"
+    ]
+  },
+  "$version": 3
+}
