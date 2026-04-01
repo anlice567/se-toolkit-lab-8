@@ -8,23 +8,23 @@ ENV UV_PYTHON_DOWNLOADS=0
 WORKDIR /app
 
 # Install all packages in dependency order (non-editable, no workspace refs)
-RUN uv pip install "nanobot-ai @ https://github.com/HKUDS/nanobot/archive/e7d371ec1e6531b28898ec2c869ef338e8dd46ec.zip"
+RUN uv pip install --system "nanobot-ai @ https://github.com/HKUDS/nanobot/archive/e7d371ec1e6531b28898ec2c869ef338e8dd46ec.zip"
 
 COPY --from=workspace nanobot-websocket-channel/nanobot-channel-protocol /tmp/nanobot-channel-protocol
-RUN uv pip install /tmp/nanobot-channel-protocol
+RUN uv pip install --system /tmp/nanobot-channel-protocol
 
 COPY --from=workspace nanobot-websocket-channel/mcp-webchat /tmp/mcp-webchat
-RUN uv pip install /tmp/mcp-webchat
+RUN uv pip install --system /tmp/mcp-webchat
 
 COPY --from=workspace nanobot-websocket-channel/nanobot-webchat /tmp/nanobot-webchat
-RUN uv pip install /tmp/nanobot-webchat
+RUN uv pip install --system /tmp/nanobot-webchat
 
 COPY --from=workspace mcp/mcp-lms /tmp/mcp-lms
-RUN uv pip install /tmp/mcp-lms
+RUN uv pip install --system /tmp/mcp-lms
 
 # Copy nanobot source from local context (build context is ./nanobot)
 COPY . /app/nanobot
-RUN uv pip install /app/nanobot
+RUN uv pip install --system /app/nanobot
 
 # --- Runtime stage ---
 ARG REGISTRY_PREFIX_DOCKER_HUB
