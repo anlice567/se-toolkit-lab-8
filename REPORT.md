@@ -221,11 +221,71 @@ EOF
 
 ## Task 2A — Deployed agent
 
-<!-- Paste a short nanobot startup log excerpt showing the gateway started inside Docker -->
+Nanobot успешно запущен как Docker сервис через `nanobot gateway`.
+
+**Startup logs:**
+
+```
+nanobot-1  | Using config: /app/nanobot/config.resolved.json
+nanobot-1  | 🐈 Starting nanobot gateway version 0.1.4.post5 on port 18790...
+nanobot-1  | 2026-04-01 20:49:33.449 | INFO | nanobot.channels.manager:_init_channels:58 - WebChat channel enabled
+nanobot-1  | ✓ Channels enabled: webchat
+nanobot-1  | 2026-04-01 20:49:34.932 | INFO | nanobot.agent.tools.mcp:connect_mcp_servers:246 - MCP server 'lms': connected, 9 tools registered
+nanobot-1  | 2026-04-01 20:49:35.657 | INFO | nanobot.agent.tools.mcp:connect_mcp_servers:246 - MCP server 'webchat': connected, 1 tools registered
+nanobot-1  | 2026-04-01 20:49:35.657 | INFO | nanobot.agent.loop:run:280 - Agent loop started
+```
+
+**Docker build successful:**
+
+```
+[+] Building 96.7s (30/30) FINISHED
+[builder  3/13] RUN uv pip install --system "nanobot-ai @ https://github.com/HKUDS/nanobot/archive/..."
+[builder  5/13] RUN uv pip install --system /tmp/nanobot-channel-protocol
+[builder  7/13] RUN uv pip install --system /tmp/mcp-webchat
+[builder  9/13] RUN uv pip install --system /tmp/nanobot-webchat
+[builder 11/13] RUN uv pip install --system /tmp/mcp-lms
+[builder 13/13] RUN uv pip install --system /app/nanobot
+✔ Image se-toolkit-lab-8-nanobot Built
+```
 
 ## Task 2B — Web client
 
-<!-- Screenshot of a conversation with the agent in the Flutter web app -->
+**Flutter клиент доступен по адресу:** <http://10.93.25.149:42002/flutter>
+
+**Access key:** `88888`
+
+**WebSocket endpoint:** `ws://localhost:42002/ws/chat?access_key=88888`
+
+**Caddy routes configured:**
+
+- `/flutter*` → serves Flutter web app from `/srv/flutter`
+- `/ws/chat` → reverse proxy to nanobot WebSocket channel
+
+**Architecture:**
+
+```
+browser -> caddy:42002 -> nanobot:8765 (webchat channel) -> nanobot gateway -> mcp_lms -> backend
+nanobot gateway -> qwen-code-api -> Qwen LLM
+nanobot gateway -> mcp_webchat -> webchat UI relay -> browser
+```
+
+**Files modified for Task 2:**
+
+| File | Changes |
+|------|---------|
+| `nanobot/Dockerfile` | Multi-stage build with uv, installs all MCP and webchat packages |
+| `nanobot/entrypoint.py` | Resolves env vars into config at runtime |
+| `nanobot/pyproject.toml` | Dependencies: nanobot-ai |
+| `nanobot-websocket-channel/mcp-webchat/pyproject.toml` | Removed workspace refs |
+| `nanobot-websocket-channel/nanobot-webchat/pyproject.toml` | Removed workspace refs |
+| `caddy/Caddyfile` | Added routes for /flutter and /ws/chat |
+| `docker-compose.yml` | Added nanobot, client-web-flutter services |
+
+**Screenshot:**
+
+*Откройте <http://10.93.25.149:42002/flutter>, войдите с `88888`, задайте вопрос "What can you do?" и вставьте скриншот сюда:*
+
+![Flutter chat screenshot](task2-flutter-chat.png)
 
 ## Task 3A — Structured logging
 
