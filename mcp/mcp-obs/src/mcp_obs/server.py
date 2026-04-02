@@ -210,8 +210,8 @@ def main():
     """Run the MCP server."""
 
     async def run_server():
-        read_stream, write_stream = stdio_server()
-        await server.run(read_stream, write_stream)
+        async with stdio_server() as (read_stream, write_stream):
+            await server.run(read_stream, write_stream)
 
     asyncio.run(run_server())
 
