@@ -206,12 +206,17 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
             raise ValueError(f"Unknown tool: {name}")
 
 
-async def main():
+async def _async_main():
     """Run the MCP server."""
     async with stdio_server() as (read_stream, write_stream):
         init_options = server.create_initialization_options()
         await server.run(read_stream, write_stream, init_options)
 
 
+def main():
+    """Entry point for mcp-obs CLI."""
+    asyncio.run(_async_main())
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
