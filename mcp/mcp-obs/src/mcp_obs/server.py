@@ -110,6 +110,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
                 if line.strip():
                     try:
                         import json
+
                         results.append(json.loads(line))
                     except json.JSONDecodeError:
                         results.append({"raw": line})
@@ -130,6 +131,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
                     error_count += 1
                     try:
                         import json
+
                         entry = json.loads(line)
                         service = entry.get("service.name", "unknown")
                         service_counts[service] = service_counts.get(service, 0) + 1
@@ -172,7 +174,9 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
             # Jaeger API returns {"data": [trace]}
             traces = data.get("data", [])
             if not traces:
-                return [{"content": f"Trace {trace_id} not found", "mimeType": "text/plain"}]
+                return [
+                    {"content": f"Trace {trace_id} not found", "mimeType": "text/plain"}
+                ]
             trace = traces[0]
             # Summarize the trace
             spans = trace.get("spans", [])
@@ -181,7 +185,9 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
                 span_info = {
                     "span_id": span.get("spanID"),
                     "operation_name": span.get("operationName"),
-                    "service_name": span.get("process", {}).get("serviceName", "unknown"),
+                    "service_name": span.get("process", {}).get(
+                        "serviceName", "unknown"
+                    ),
                     "duration_ms": span.get("duration", 0) / 1000,
                     "tags": {
                         tag["key"]: tag["value"]
@@ -202,7 +208,12 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
 
 def main():
     """Run the MCP server."""
-    asyncio.run(server.run(stdio_server()))
+
+    async def run_server():
+        read_stream, write_stream = stdio_server()
+        await server.run(read_stream, write_stream)
+
+    asyncio.run(run_server())
 
 
 if __name__ == "__main__":
