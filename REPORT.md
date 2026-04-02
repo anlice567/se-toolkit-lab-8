@@ -596,6 +596,19 @@ docker compose start postgres
 | `nanobot/entrypoint.py` | Added mcp_obs environment variable handling |
 | `pyproject.toml` | Added mcp-obs to workspace members |
 
+---
+
+## Task 3 Final Status
+
+**PR:** `pr/task3-observability` → `main`
+
+**Status:** ✅ Completed
+
+**Deliverables:**
+- MCP observability server with 4 tools (logs_error_count, logs_search, traces_list, traces_get)
+- Observability skill prompt in `workspace/skills/observability/SKILL.md`
+- Agent can investigate failures using logs → traces flow
+
 ## Task 4A — Multi-step investigation
 
 <!-- Paste the agent's response to "What went wrong?" showing chained log + trace investigation -->
