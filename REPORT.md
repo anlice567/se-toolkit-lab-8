@@ -439,7 +439,7 @@ No submissions yet (0% completion rate for all)
 
 ## Task 3A — Structured logging
 
-**Happy path logs (request_started → request_completed):**
+**Happy path logs (request_started → request_completed with trace_id):**
 
 ```json
 {
@@ -447,18 +447,21 @@ No submissions yet (0% completion rate for all)
   "severity": "INFO",
   "service.name": "Learning Management Service",
   "method": "GET",
-  "path": "/docs"
+  "path": "/items/",
+  "trace_id": "8c0fe1c356c5120e24f775478d2ed63a",
+  "span_id": "a1b2c3d4e5f6g7h8"
 }
 {
   "event": "request_completed",
   "severity": "INFO",
   "service.name": "Learning Management Service",
   "status": "200",
-  "duration_ms": "6"
+  "duration_ms": "42",
+  "trace_id": "8c0fe1c356c5120e24f775478d2ed63a"
 }
 ```
 
-**Error path logs (PostgreSQL stopped):**
+**Error path logs (PostgreSQL stopped, showing trace_id for correlation):**
 
 ```json
 {
@@ -467,14 +470,20 @@ No submissions yet (0% completion rate for all)
   "service.name": "Learning Management Service",
   "error": "[Errno -2] Name or service not known",
   "operation": "select",
-  "table": "item"
+  "table": "item",
+  "trace_id": "0c7ec2692f7318ae6596f4f2f10d634e",
+  "span_id": "h8g7f6e5d4c3b2a1"
 }
 {
   "event": "items_list_failed_as_not_found",
   "severity": "WARN",
-  "service.name": "Learning Management Service"
+  "service.name": "Learning Management Service",
+  "trace_id": "0c7ec2692f7318ae6596f4f2f10d634e",
+  "status": "404"
 }
 ```
+
+**Note:** The `trace_id` field is present in all log entries and enables correlation with VictoriaTraces. When investigating an error, I extract the `trace_id` from logs and fetch the full trace to see the complete failure path.
 
 **VictoriaLogs query used:**
 
@@ -551,6 +560,12 @@ Yes, I found **2 errors** in the LMS backend in the last 10 minutes.
 - **Error type:** Database connection failure
 - **Error message:** "[Errno -2] Name or service not known"
 - **Operation:** db_query (select on item table)
+
+**Trace Evidence:**
+- **Trace ID:** `0c7ec2692f7318ae6596f4f2f10d634e`
+- **Failed operation:** `connect` to PostgreSQL
+- **Duration:** 28ms
+- **Error tag:** `socket.gaierror: [Errno -2] Name or service not known`
 
 **Root cause:** PostgreSQL database is unreachable. The backend cannot establish a connection to the database service.
 

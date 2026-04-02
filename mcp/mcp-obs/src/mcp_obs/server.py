@@ -93,8 +93,11 @@ async def list_tools() -> list[Tool]:
 
 
 @server.call_tool()
-async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]]:
+async def call_tool(name: str, arguments: dict[str, Any]) -> list[Any]:
     """Execute an observability tool."""
+    import json
+    from mcp.types import TextContent
+
     async with httpx.AsyncClient(timeout=30.0) as client:
         if name == "logs_search":
             query = arguments.get("query", "_time:10m")
@@ -109,12 +112,10 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
             for line in lines:
                 if line.strip():
                     try:
-                        import json
-
                         results.append(json.loads(line))
                     except json.JSONDecodeError:
                         results.append({"raw": line})
-            return [{"content": str(results), "mimeType": "application/json"}]
+            return [TextContent(type="text", text=json.dumps(results, indent=2))]
 
         elif name == "logs_error_count":
             minutes = arguments.get("minutes", 60)
@@ -130,8 +131,6 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
                 if line.strip():
                     error_count += 1
                     try:
-                        import json
-
                         entry = json.loads(line)
                         service = entry.get("service.name", "unknown")
                         service_counts[service] = service_counts.get(service, 0) + 1
@@ -142,7 +141,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
                 "time_window_minutes": minutes,
                 "by_service": service_counts,
             }
-            return [{"content": str(result), "mimeType": "application/json"}]
+            return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
         elif name == "traces_list":
             service = arguments.get("service", "Learning Management Service")
@@ -163,7 +162,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
                         "start_time": trace.get("startTime"),
                     }
                 )
-            return [{"content": str(summary), "mimeType": "application/json"}]
+            return [TextContent(type="text", text=json.dumps(summary, indent=2))]
 
         elif name == "traces_get":
             trace_id = arguments["trace_id"]
@@ -174,9 +173,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
             # Jaeger API returns {"data": [trace]}
             traces = data.get("data", [])
             if not traces:
-                return [
-                    {"content": f"Trace {trace_id} not found", "mimeType": "text/plain"}
-                ]
+                return [TextContent(type="text", text=f"Trace {trace_id} not found")]
             trace = traces[0]
             # Summarize the trace
             spans = trace.get("spans", [])
@@ -200,7 +197,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
                 "trace_id": trace.get("traceID"),
                 "spans": span_summary,
             }
-            return [{"content": str(result), "mimeType": "application/json"}]
+            return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
         else:
             raise ValueError(f"Unknown tool: {name}")
