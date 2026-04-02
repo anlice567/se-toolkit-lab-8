@@ -1,0 +1,55 @@
+{
+  "agents": {
+    "defaults": {
+      "model": "coder-model",
+      "workspace": "./workspace",
+      "provider": "custom"
+    }
+  },
+  "providers": {
+    "custom": {
+      "apiKey": "fThN4GExa5z52yHOVrDgxdrL-k1vl3PiYw5uyOMDYAc7O3FgHZzjI-iaITC7PwQpsMnexsacYlVE1AhkEhgIWA",
+      "apiBase": "http://localhost:42005/v1"
+    }
+  },
+  "gateway": {
+    "host": "0.0.0.0",
+    "port": 18790
+  },
+  "channels": {
+    "webchat": {
+      "enabled": true,
+      "host": "0.0.0.0",
+      "port": 8765,
+      "allowFrom": ["*"]
+    }
+  },
+  "tools": {
+    "mcpServers": {
+      "lms": {
+        "command": "python",
+        "args": ["-m", "mcp_lms"],
+        "env": {
+          "NANOBOT_LMS_BACKEND_URL": "http://localhost:42002",
+          "NANOBOT_LMS_API_KEY": "fThN4GExa5z52yHOVrDgxdrL-k1vl3PiYw5uyOMDYAc7O3FgHZzjI-iaITC7PwQpsMnexsacYlVE1AhkEhgIWA"
+        }
+      },
+      "webchat": {
+        "command": "python",
+        "args": ["-m", "mcp_webchat"],
+        "env": {
+          "NANOBOT_WS_URL": "ws://nanobot:8765",
+          "NANOBOT_WS_TOKEN": "nanobot-password-123"
+        }
+      },
+      "mcp_obs": {
+        "command": "mcp-obs",
+        "args": [],
+        "env": {
+          "VICTORIALOGS_URL": "http://localhost:42010",
+          "VICTORIATRACES_URL": "http://localhost:42011"
+        }
+      }
+    }
+  }
+}
