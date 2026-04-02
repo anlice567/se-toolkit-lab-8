@@ -644,3 +644,16 @@ docker compose start postgres
      2. Code fix (diff or description)
      3. Post-fix response to "What went wrong?" showing the real underlying failure
      4. Healthy follow-up report or transcript after recovery -->
+
+---
+
+## Task 4 Final Status
+
+**PR:** `pr/task4-diagnose-failure` → `main`
+
+**Status:** 🔄 In Progress
+
+**Parts to complete:**
+- [ ] Task 4A — Multi-step investigation (stop postgres, ask "What went wrong?")
+- [ ] Task 4B — Proactive health check (create cron job)
+- [ ] Task 4C — Bug fix and recovery (fix backend, redeploy, verify)
