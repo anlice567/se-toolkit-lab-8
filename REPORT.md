@@ -450,6 +450,14 @@ No submissions yet (0% completion rate for all)
 - ✅ Structured-ui skill works with LMS skill for lab-selection prompts
 - ✅ `REPORT.md` contains responses from both checkpoints
 
+---
+
+## Task 2 Final Status
+
+**PR:** `pr/task2-web-client` → `main`
+
+**Status:** ✅ Completed and deployed
+
 ## Task 3A — Structured logging
 
 **Happy path logs (request_started → request_completed with trace_id):**
