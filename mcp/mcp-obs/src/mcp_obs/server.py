@@ -206,15 +206,12 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
             raise ValueError(f"Unknown tool: {name}")
 
 
-def main():
+async def main():
     """Run the MCP server."""
-
-    async def run_server():
-        async with stdio_server() as (read_stream, write_stream):
-            await server.run(read_stream, write_stream, initialization_options={})
-
-    asyncio.run(run_server())
+    async with stdio_server() as (read_stream, write_stream):
+        init_options = server.create_initialization_options()
+        await server.run(read_stream, write_stream, init_options)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
