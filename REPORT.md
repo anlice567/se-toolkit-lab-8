@@ -314,11 +314,104 @@ nanobot gateway -> mcp_webchat -> webchat UI relay -> browser
 5. ✅ Login with access key `88888` works
 6. ✅ Agent responds to questions
 
-**Agent responses observed:**
+### Agent responses from Flutter chat
 
-- **"What can you do?"** — Agent lists capabilities: check health, show labs, scores, pass rates, completion rates, timeline, groups, top learners
-- **"How is the backend doing?"** — Agent calls `mcp_lms_lms_health`, reports backend status
-- **"Show me the scores"** — Agent follows LMS skill strategy: calls `mcp_lms_labs` first, then shows scores
+**Question 1: "What can you do in this system?"**
+
+**Agent Response:**
+
+```
+Привет! Я nanobot 🐈 — ваш персональный AI-ассистент. Вот что я умею:
+
+## 📁 Работа с файлами
+- Читать, писать и редактировать файлы
+- Просматривать содержимое директорий
+- Выполнять shell-команды
+
+## 🌐 Веб-возможности
+- Поиск информации в интернете
+- Извлечение контента с веб-страниц
+
+## ⏰ Планирование
+- Создание напоминаний и периодических задач
+- Управление расписанием через cron
+
+## 🎓 LMS (Learning Management System)
+- Просмотр лабораторных работ
+- Проверка успеваемости и статистики
+- Мониторинг прогресса студентов
+
+## 🤖 Расширенные возможности
+- Запуск суб-агентов для сложных задач
+- Интерактивные UI-сообщения (в поддерживаемых чатах)
+- Долговременная память для важных фактов
+- Создание и установка новых навыков (skills)
+
+## 📬 Коммуникация
+- Отправка сообщений в Telegram, Discord и другие каналы
+- Работа с WebChat (как сейчас)
+
+Есть вопросы или что-то конкретное, с чем могу помочь? 😊
+```
+
+**Question 2: "How is the backend doing?"**
+
+**Agent Response:**
+
+```
+The backend is doing great! ✅
+
+**Status:** Healthy  
+**Item Count:** 56 items  
+**Errors:** None
+
+Everything is running smoothly. Is there anything specific you'd like to check or work on?
+```
+
+*This response is backed by real LMS data — the agent called `mcp_lms_lms_health` and received `status: healthy, item_count: 56`.*
+
+**Question 3: "Show me the scores"**
+
+**Agent Response:**
+
+```
+## 📊 LMS Scores Overview
+
+### **Lab 01 – Products, Architecture & Roles** ✅
+**Completion Rate:** 93.9% (108/115 students passed)
+
+| Task | Avg Score | Attempts |
+|------|-----------|----------|
+| Lab setup | **97.2** | 119 |
+| Task 0: Practice the Git workflow | **65.2** | 214 |
+| Task 1: Product & architecture description | **59.4** | 90 |
+| Task 2: Roles and skills mapping | **53.9** | 42 |
+| Optional: Resolve a merge conflict | **41.7** | 6 |
+| Optional: Create a release | **50.0** | 2 |
+| Optional: Add a CI check | **25.0** | 4 |
+| Optional: Plan skill development | **0.0** | 1 |
+
+---
+
+### **Labs 02-08** 📭
+No submissions yet (0% completion rate for all)
+
+| Lab | Title | Status |
+|-----|-------|--------|
+| Lab 02 | Run, Fix, and Deploy a Backend Service | No activity |
+| Lab 03 | Backend API: Explore, Debug, Implement, Deploy | No activity |
+| Lab 04 | Testing, Front-end, and AI Agents | No activity |
+| Lab 05 | Data Pipeline and Analytics Dashboard | No activity |
+| Lab 06 | Build Your Own Agent | No activity |
+| Lab 07 | Build a Client with an AI Coding Agent | No activity |
+| Lab 08 | lab-08 | No activity |
+
+---
+
+**Summary:** Only Lab 01 is active with strong completion (93.9%). Students performed best on "Lab setup" (97.2%) and struggled most with optional tasks. Would you like to see top learners or more detailed stats for Lab 01?
+```
+
+*The agent followed the LMS skill strategy: first called `mcp_lms_labs` to get available labs, then called `mcp_lms_lms_pass_rates` (or similar) to fetch scores for each lab. The response shows real data from the LMS backend.*
 
 **Screenshot:**
 
