@@ -64,6 +64,15 @@ def main():
         if webchat_token:
             mcp_servers["webchat"]["env"]["NANOBOT_WS_TOKEN"] = webchat_token
 
+    # Observability MCP server (mcp-obs)
+    if "mcp_obs" in mcp_servers:
+        victorialogs_url = os.environ.get("NANOBOT_VICTORIALOGS_URL")
+        victoriatraces_url = os.environ.get("NANOBOT_VICTORIATRACES_URL")
+        if victorialogs_url:
+            mcp_servers["mcp_obs"]["env"]["VICTORIALOGS_URL"] = victorialogs_url
+        if victoriatraces_url:
+            mcp_servers["mcp_obs"]["env"]["VICTORIATRACES_URL"] = victoriatraces_url
+
     # Webchat channel settings
     webchat_host = os.environ.get("NANOBOT_WEBCHAT_CONTAINER_ADDRESS")
     webchat_port = os.environ.get("NANOBOT_WEBCHAT_CONTAINER_PORT")

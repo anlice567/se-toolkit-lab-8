@@ -22,6 +22,9 @@ RUN uv pip install --system /tmp/nanobot-webchat
 COPY --from=workspace mcp/mcp-lms /tmp/mcp-lms
 RUN uv pip install --system /tmp/mcp-lms
 
+COPY --from=workspace mcp/mcp-obs /tmp/mcp-obs
+RUN uv pip install --system /tmp/mcp-obs
+
 # Copy nanobot source from local context (build context is ./nanobot)
 COPY . /app/nanobot
 RUN uv pip install --system /app/nanobot
