@@ -211,7 +211,7 @@ def main():
 
     async def run_server():
         async with stdio_server() as (read_stream, write_stream):
-            await server.run(read_stream, write_stream)
+            await server.run(read_stream, write_stream, initialization_options={})
 
     asyncio.run(run_server())
 
