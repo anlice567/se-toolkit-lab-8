@@ -56,9 +56,11 @@ An API key is a secret value used to [authenticate](./http-auth.md#http-authenti
 
 ## API key rules
 
-The API key must be:
+The [API key](#api-key) must be:
 
 - an arbitrary string that follows the [API key format](#api-key-format)
+
+- be designed by you unless it's explicitly stated that you must obtain it by an external provider.
 
 - kept secret so that other people can't use your [API](#web-api) without your permission
 
