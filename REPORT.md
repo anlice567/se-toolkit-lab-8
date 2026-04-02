@@ -439,15 +439,147 @@ No submissions yet (0% completion rate for all)
 
 ## Task 3A — Structured logging
 
-<!-- Paste happy-path and error-path log excerpts, VictoriaLogs query screenshot -->
+**Happy path logs (request_started → request_completed):**
+
+```json
+{
+  "event": "request_started",
+  "severity": "INFO",
+  "service.name": "Learning Management Service",
+  "method": "GET",
+  "path": "/docs"
+}
+{
+  "event": "request_completed",
+  "severity": "INFO",
+  "service.name": "Learning Management Service",
+  "status": "200",
+  "duration_ms": "6"
+}
+```
+
+**Error path logs (PostgreSQL stopped):**
+
+```json
+{
+  "event": "db_query",
+  "severity": "ERROR",
+  "service.name": "Learning Management Service",
+  "error": "[Errno -2] Name or service not known",
+  "operation": "select",
+  "table": "item"
+}
+{
+  "event": "items_list_failed_as_not_found",
+  "severity": "WARN",
+  "service.name": "Learning Management Service"
+}
+```
+
+**VictoriaLogs query used:**
+
+```
+_time:10m service.name:"Learning Management Service" severity:ERROR
+```
+
+**VictoriaLogs UI screenshot:**
+
+![VictoriaLogs query result](lab/images/tasks/setup/victorialogs-errors.png)
+
+---
 
 ## Task 3B — Traces
 
-<!-- Screenshots: healthy trace span hierarchy, error trace -->
+**Trace details from VictoriaTraces:**
+
+- **Trace ID:** `0c7ec2692f7318ae6596f4f2f10d634e`
+- **Total spans:** 5
+- **Error span:** `connect` operation with `error: true` tag
+- **HTTP span:** `GET /items/` with `http.status_code: 404`
+
+**Span hierarchy:**
+
+| Span | Operation | Service | Duration | Tags |
+|------|-----------|---------|----------|------|
+| 1 | connect | unknown | 28.13ms | error: true |
+| 2 | GET /items/ | unknown | 46.90ms | http.status_code: 404 |
+| 3 | GET /items/ http send | unknown | 0.06ms | http.status_code: 404 |
+
+**VictoriaTraces UI screenshot:**
+
+![VictoriaTraces error trace](lab/images/tasks/setup/victoriatraces-error.png)
+
+---
 
 ## Task 3C — Observability MCP tools
 
-<!-- Paste agent responses to "any errors in the last hour?" under normal and failure conditions -->
+**MCP server created:** `mcp-obs` with 4 tools:
+
+| Tool | Description |
+|------|-------------|
+| `mcp_obs_logs_search` | Search logs in VictoriaLogs using LogsQL query |
+| `mcp_obs_logs_error_count` | Count errors per service over a time window |
+| `mcp_obs_traces_list` | List recent traces for a service |
+| `mcp_obs_traces_get` | Fetch a specific trace by ID |
+
+**Skill file created:** `nanobot/workspace/skills/observability/SKILL.md`
+
+**Agent test — Normal state:**
+
+**Question:** "Any LMS backend errors in the last 10 minutes?"
+
+**Response:**
+
+```
+Good news! **No LMS backend errors found in the last 10 minutes.**
+
+The LMS backend is currently **healthy** with 56 items in the system. 
+The logs search returned no error entries for the Learning Management Service in that time window.
+```
+
+**Agent test — Failure state (PostgreSQL stopped):**
+
+**Question:** "Any LMS backend errors in the last 10 minutes?"
+
+**Response:**
+
+```
+Yes, I found **2 errors** in the LMS backend in the last 10 minutes.
+
+**Error details:**
+- **Service:** Learning Management Service
+- **Error type:** Database connection failure
+- **Error message:** "[Errno -2] Name or service not known"
+- **Operation:** db_query (select on item table)
+
+**Root cause:** PostgreSQL database is unreachable. The backend cannot establish a connection to the database service.
+
+**Recommendation:** Check if PostgreSQL container is running:
+```bash
+docker compose ps postgres
+```
+
+If stopped, restart with:
+
+```bash
+docker compose start postgres
+```
+
+```
+
+**Files created/modified:**
+
+| File | Purpose |
+|------|---------|
+| `mcp/mcp-obs/src/mcp_obs/server.py` | MCP server with 4 observability tools |
+| `mcp/mcp-obs/src/mcp_obs/__main__.py` | Entry point for running as module |
+| `mcp/mcp-obs/README.md` | Documentation |
+| `mcp/mcp-obs/pyproject.toml` | Package configuration |
+| `nanobot/workspace/skills/observability/SKILL.md` | Skill prompt for observability reasoning |
+| `nanobot/config.json` | Added mcp_obs MCP server configuration |
+| `nanobot/Dockerfile` | Added mcp-obs installation |
+| `nanobot/entrypoint.py` | Added mcp_obs environment variable handling |
+| `pyproject.toml` | Added mcp-obs to workspace members |
 
 ## Task 4A — Multi-step investigation
 
